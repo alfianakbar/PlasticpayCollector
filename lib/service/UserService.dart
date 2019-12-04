@@ -1,6 +1,6 @@
-import 'package:plasticpay/model/LoginModel.dart';
-import 'package:plasticpay/model/ProfileModel.dart';
-import 'package:plasticpay/model/PinModel.dart';
+import 'package:plasticpaycoll/model/LoginModel.dart';
+import 'package:plasticpaycoll/model/ProfileModel.dart';
+import 'package:plasticpaycoll/model/PinModel.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:io';
@@ -34,12 +34,16 @@ Future login(String email, String password) async {
 Future<ProfileModel> getProfile() async {
   String url = '${Config.url}/profile';
   String token = await getSharedPrefString('token');
-  final response = await http.get('${url}',
-      headers: {'Secret': Config.secret, 'Authorization': token});
-  print(token);
-  print(response.body);
+  final response = await http
+      .get('$url', headers: {'Secret': Config.secret, 'Authorization': token});
+//  print(token);
+//  print(response.body);
+  ProfileModel profileModel = profileModelFromJson(response.body);
   try {
-    return profileModelFromJson(response.body);
+    if (profileModel.content == null) {
+      return null;
+    }
+    return profileModel;
   } catch (e) {
     return null;
   }
@@ -66,7 +70,7 @@ Future register(User user) async {
 Future<bool> registerString(String user) async {
   String url = '${Config.url}/registration';
   String body = user;
-  print(body);
+//  print(body);
   final response = await http.post('$url',
       headers: {
         HttpHeaders.contentTypeHeader: 'application/json',
@@ -101,7 +105,7 @@ Future<ProfileModel> editProfile(
     ProfileModel profileModel = profileModelFromJson(response.body);
     await login(email, password);
     return profileModel;
-  }catch(e){
+  } catch (e) {
     return null;
   }
 }
@@ -109,7 +113,7 @@ Future<ProfileModel> editProfile(
 Future logout() async {
   String url = '${Config.url}/logout';
   await setSharedPrefString('token', 'kosong');
-  final response = await http.post(url);
+  await http.post(url);
 }
 
 Future<bool> checkPin(int pin) async {
@@ -126,7 +130,7 @@ Future<bool> checkPin(int pin) async {
 //  print(response.body);
   try {
     return pinModelFromJson(response.body).status == 'success';
-  }catch(e){
+  } catch (e) {
     return null;
   }
 }

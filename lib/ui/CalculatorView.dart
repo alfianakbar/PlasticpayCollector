@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'MyTheme.dart';
-import 'package:plasticpay/service/ConversionService.dart';
+import 'package:plasticpaycoll/service/ConversionService.dart';
 import 'package:flutter/services.dart';
 
 void main() => runApp(MaterialApp(
@@ -149,17 +149,20 @@ class _CalculatorViewState extends State<CalculatorView> {
                               ],
                             ),
                             onTap: () {
+                              Navigator.pop(context, total);
+                              /*
                               Clipboard.setData(new ClipboardData(text: total));
                               final snackBar = SnackBar(
                                 content: Text('Total berat: $total kg!'),
                                 action: SnackBarAction(
                                   label: 'Copy',
                                   onPressed: () {
-                                    // Some code to undo the change.
+                                    Navigator.pop(context, total);
                                   },
                                 ),
                               );
                               Scaffold.of(context).showSnackBar(snackBar);
+                               */
                             },
                           ),
                         ],
@@ -181,7 +184,7 @@ class _CalculatorViewState extends State<CalculatorView> {
                         style: TextStyle(color: Colors.white, fontSize: 15),
                       ),
                       onPressed: () {
-                        Navigator.pop(context);
+                        Navigator.pop(context, total);
                       },
                     ),
                   )

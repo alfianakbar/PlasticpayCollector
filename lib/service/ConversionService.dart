@@ -1,4 +1,4 @@
-import 'package:plasticpay/model/ConversionModel.dart';
+import 'package:plasticpaycoll/model/ConversionModel.dart';
 import 'Config.dart';
 import 'package:http/http.dart' as http;
 import 'SharedPrefService.dart';

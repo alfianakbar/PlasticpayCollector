@@ -1,4 +1,5 @@
-import 'package:plasticpay/model/TransactionModel.dart';
+import 'package:plasticpaycoll/model/TransactionModel.dart';
+import 'package:plasticpaycoll/model/HistoryModel.dart';
 import 'Config.dart';
 import 'package:http/http.dart' as http;
 import 'SharedPrefService.dart';
@@ -7,7 +8,7 @@ import 'dart:io';
 import 'dart:convert';
 
 Future<TransactionModel> getNewTransaction() async {
-  String url = '${Config.url}/plastic/newTransaction';
+  String url = '${Config.url}/plastic/newTransaction/0/100';
   String token = await getSharedPrefString('token');
   final response = await http.get(
     '$url',
@@ -21,8 +22,8 @@ Future<TransactionModel> getNewTransaction() async {
   return transactionModelFromJson(response.body);
 }
 
-Future<TransactionModel> getHistory() async {
-  String url = '${Config.url}/plastic/history';
+Future<HistoryModel> getHistory() async {
+  String url = '${Config.url}/plastic/history/0/100';
   String token = await getSharedPrefString('token');
   final response = await http.get(
     '$url',
@@ -33,7 +34,7 @@ Future<TransactionModel> getHistory() async {
     },
   );
 //  print(response.body);
-  return transactionModelFromJson(response.body);
+  return historyModelFromJson(response.body);
 }
 
 Future<bool> editTransaction(int idTransaction, double totalPlastic) async {

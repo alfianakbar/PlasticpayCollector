@@ -1,4 +1,4 @@
-import 'package:plasticpay/model/RedeemModel.dart';
+import 'package:plasticpaycoll/model/RedeemModel.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:io';
@@ -16,6 +16,6 @@ Future<RedeemModel> redeem(int poin) async {
         'Secret': Config.secret,
       },
       body: body);
-  print(response.body);
+//  print(response.body);
   return redeemModelFromJson(response.body);
 }

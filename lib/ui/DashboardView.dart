@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:plasticpay/model/ProfileModel.dart';
-import 'package:barcode_scan/barcode_scan.dart';
+import 'package:plasticpaycoll/model/ProfileModel.dart';
 import 'package:flutter/services.dart';
 import 'EditProfileView.dart';
-import 'package:plasticpay/service/UserService.dart';
+import 'package:plasticpaycoll/service/UserService.dart';
 import 'LoginView.dart';
 import 'dart:async';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'CalculatorView.dart';
 import 'MyTheme.dart';
-import 'package:plasticpay/model/TransactionModel.dart';
-import 'package:plasticpay/service/TransactionService.dart';
+import 'package:plasticpaycoll/model/TransactionModel.dart';
+import 'package:plasticpaycoll/model/HistoryModel.dart';
+import 'package:plasticpaycoll/service/TransactionService.dart';
 
 class DashboardView extends StatefulWidget {
   final ProfileModel user;
@@ -26,6 +26,7 @@ enum StateView { showNewTransaction, showHistory, showQR }
 class _DashboardViewState extends State<DashboardView> {
   ProfileModel user;
   TransactionModel transaction;
+  HistoryModel history;
   String barcode = "";
   ScrollController scrollController;
   TextEditingController _totalPlastikController = TextEditingController();
@@ -43,10 +44,10 @@ class _DashboardViewState extends State<DashboardView> {
   }
 
   Future refreshHistory() async {
-    TransactionModel tmp = await getHistory();
+    HistoryModel tmp = await getHistory();
     ProfileModel tmpUser = await getProfile();
     setState(() {
-      transaction = tmp;
+      history = tmp;
       user = tmpUser;
     });
   }
@@ -58,6 +59,9 @@ class _DashboardViewState extends State<DashboardView> {
     refreshTransaction().then((res) {
       scrollController = ScrollController(
           initialScrollOffset: transaction.content.transactions.length * 100.0);
+    });
+    setState(() {
+      refreshHistory();
     });
     super.initState();
   }
@@ -102,7 +106,8 @@ class _DashboardViewState extends State<DashboardView> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => EditProfileView()),
+                                        builder: (context) =>
+                                            EditProfileView()),
                                   );
                                 },
                               ),
@@ -142,7 +147,150 @@ class _DashboardViewState extends State<DashboardView> {
                   ),
                 ),
                 SizedBox(
-                  height: 160,
+                  height: 20,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: <Widget>[
+                    Column(
+                      children: <Widget>[
+                        Text('Poin PlasticPay',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 15,
+                            )),
+                        Text(
+                            '${user.content.user.currentStatus == null ? 0 : user.content.user.currentStatus.totalPoint}',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                    Column(
+                      children: <Widget>[
+                        Text('Total Plastik',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 15,
+                            )),
+                        Text(
+                            '${history == null ? 0 : history.content.transactions.length < 1 ? 0 : history.content.transactions[0].totalPlastic}kg',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                          color: Colors.white),
+                      padding: EdgeInsets.all(10),
+                      height: 85,
+                      alignment: Alignment.center,
+                      child: Row(
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              transaction = null;
+                              refreshTransaction();
+                              _state = StateView.showNewTransaction;
+                              setState(() {});
+                            },
+                            child: Column(
+                              children: <Widget>[
+                                Icon(
+                                  Icons.new_releases,
+                                  color: MyColors.primaryColor,
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Text(
+                                  'Transaksi\nBaru',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Colors.black87,
+                                    fontSize: 12,
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            width: 20,
+                          ),
+                          InkWell(
+                            onTap: () {
+                              transaction = null;
+                              refreshHistory();
+                              _state = StateView.showHistory;
+                              setState(() {});
+                            },
+                            child: Column(
+                              children: <Widget>[
+                                Icon(
+                                  Icons.history,
+                                  color: MyColors.primaryColor,
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Text(
+                                  'Riwayat\nTransaksi',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Colors.black87,
+                                    fontSize: 12,
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            width: 20,
+                          ),
+                          InkWell(
+                            onTap: () {
+                              _state = StateView.showQR;
+                              setState(() {});
+                            },
+                            child: Column(
+                              children: <Widget>[
+                                Icon(
+                                  Icons.camera,
+                                  color: MyColors.primaryColor,
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Text(
+                                  'QR Code\nSaya',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Colors.black87,
+                                    fontSize: 12,
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 20,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -174,179 +322,6 @@ class _DashboardViewState extends State<DashboardView> {
                         : _buildNewTransactionView(),
               ],
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 100),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                        color: Colors.white),
-                    padding: EdgeInsets.all(10),
-                    height: 85,
-                    alignment: Alignment.center,
-                    child: Row(
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            transaction = null;
-                            refreshTransaction();
-                            _state = StateView.showNewTransaction;
-                            setState(() {});
-                          },
-                          child: Column(
-                            children: <Widget>[
-                              Icon(
-                                Icons.new_releases,
-                                color: MyColors.primaryColor,
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                'Transaksi\nBaru',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: Colors.black87,
-                                  fontSize: 12,
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        SizedBox(
-                          width: 20,
-                        ),
-                        InkWell(
-                          onTap: () {
-                            transaction = null;
-                            refreshHistory();
-                            _state = StateView.showHistory;
-                            setState(() {});
-                          },
-                          child: Column(
-                            children: <Widget>[
-                              Icon(
-                                Icons.history,
-                                color: MyColors.primaryColor,
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                'Riwayat\nTransaksi',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: Colors.black87,
-                                  fontSize: 12,
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        SizedBox(
-                          width: 20,
-                        ),
-                        InkWell(
-                          onTap: () {
-                            _state = StateView.showQR;
-                            setState(() {});
-                          },
-                          child: Column(
-                            children: <Widget>[
-                              Icon(
-                                Icons.camera,
-                                color: MyColors.primaryColor,
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                'QR\nSaya',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: Colors.black87,
-                                  fontSize: 12,
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        SizedBox(
-                          width: 20,
-                        ),
-                        InkWell(
-                            child: Column(
-                              children: <Widget>[
-                                Image.asset(
-                                  'assets/images/qr_inacash_mini.png',
-                                  height: 20,
-                                ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                Text(
-                                  'Redeem\nInacash',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: Colors.black87,
-                                    fontSize: 12,
-                                  ),
-                                )
-                              ],
-                            ),
-                            onTap: () {
-                              showDialog(
-                                  context: _scaffold.currentContext,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: new Text(
-                                          "Masukkan poin yang akan ditukar ke Inacash"),
-                                      content: TextField(
-                                        keyboardType: TextInputType.number,
-//                                            controller: _pointController,
-                                        decoration:
-                                            InputDecoration(hintText: "poin"),
-                                      ),
-                                      actions: <Widget>[
-                                        // usually buttons at the bottom of the dialog
-                                        new FlatButton(
-                                          child: new Text("OK"),
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                            showDialog(
-                                                context: _scaffold.currentContext,
-                                                builder: (BuildContext context) {
-                                                  return AlertDialog(
-                                                    title:
-                                                        new Text("Redeem Result"),
-                                                    content: Text(
-                                                        'Fasilitas ini sedang tidak diaktifkan'),
-                                                    actions: <Widget>[
-                                                      // usually buttons at the bottom of the dialog
-                                                      new FlatButton(
-                                                        child: new Text("OK"),
-                                                        onPressed: () {
-                                                          Navigator.of(context)
-                                                              .pop();
-                                                        },
-                                                      ),
-                                                    ],
-                                                  );
-                                                });
-                                          },
-                                        ),
-                                      ],
-                                    );
-                                  });
-                            }),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
           ],
         ),
       ),
@@ -359,23 +334,30 @@ class _DashboardViewState extends State<DashboardView> {
         children: <Widget>[
           _buildLine(),
           transaction != null
-              ? ListView.builder(
-                  physics: BouncingScrollPhysics(),
-                  itemBuilder: (context, index) => _transactionBox(
-                      '${transaction.content.transactions[transaction.content.transactions.length - index - 1].user.name}',
-                      '${transaction.content.transactions[transaction.content.transactions.length - index - 1].id}',
-                      transaction
-                          .content
-                          .transactions[
-                              transaction.content.transactions.length -
-                                  index -
-                                  1]
-                          .plasticCollector
-                          .name),
-                  itemCount: transaction.content.transactions.length,
-                  reverse: false,
-                  controller: scrollController,
-                )
+              ? transaction.content.transactions.length > 0
+                  ? ListView.builder(
+                      physics: BouncingScrollPhysics(),
+                      itemBuilder: (context, index) => _transactionBox(
+                          '${transaction.content.transactions[index].user.name}',
+                          '${transaction.content.transactions[index].id}',
+                          transaction.content.transactions[index]
+                              .plasticCollector.name),
+                      itemCount: transaction.content.transactions.length,
+                      reverse: false,
+                      controller: scrollController,
+                    )
+                  : ListView(
+                      controller: scrollController,
+                      children: <Widget>[
+                        Container(
+                          height: 100,
+                          alignment: Alignment.center,
+                          child: Text('Belum ada transaksi baru',
+                              style:
+                                  TextStyle(color: Colors.grey, fontSize: 20)),
+                        )
+                      ],
+                    )
               : CircularProgressIndicator(),
         ],
       ),
@@ -387,18 +369,32 @@ class _DashboardViewState extends State<DashboardView> {
       child: Stack(
         children: <Widget>[
           _buildLine(),
-          transaction != null
-              ? ListView.builder(
-                  physics: BouncingScrollPhysics(),
-                  itemBuilder: (context, index) => _historyBox(
-                      '${transaction.content.transactions[transaction.content.transactions.length - index - 1].user.name}',
-                      '${transaction.content.transactions[transaction.content.transactions.length - index - 1].id}',
-                      '${transaction.content.transactions[transaction.content.transactions.length - index - 1].totalPlastic}kg (${transaction.content.transactions[transaction.content.transactions.length - index - 1].totalPoint}p)',
-                      '${transaction.content.transactions[transaction.content.transactions.length - index - 1].createdAt.day}/${transaction.content.transactions[transaction.content.transactions.length - index - 1].createdAt.month}/${transaction.content.transactions[transaction.content.transactions.length - index - 1].createdAt.year}'),
-                  itemCount: transaction.content.transactions.length,
-                  reverse: false,
-                  controller: scrollController,
-                )
+          history != null
+              ? history.content.transactions.length > 0
+                  ? ListView.builder(
+                      physics: BouncingScrollPhysics(),
+                      itemBuilder: (context, index) => _historyBox(
+                          history.content.transactions[index].status,
+                          '${history.content.transactions[index].user.name}',
+                          '${history.content.transactions[index].id}',
+                          '${history.content.transactions[index].plastic}kg (${history.content.transactions[index].point}p)',
+                          '${history.content.transactions[index].createdAt.day}/${history.content.transactions[index].createdAt.month}/${history.content.transactions[index].createdAt.year}'),
+                      itemCount: history.content.transactions.length,
+                      reverse: false,
+                      controller: scrollController,
+                    )
+                  : ListView(
+                      controller: scrollController,
+                      children: <Widget>[
+                        Container(
+                          height: 100,
+                          alignment: Alignment.center,
+                          child: Text('Belum ada riwayat transaksi',
+                              style:
+                                  TextStyle(color: Colors.grey, fontSize: 20)),
+                        )
+                      ],
+                    )
               : CircularProgressIndicator(),
         ],
       ),
@@ -410,7 +406,7 @@ class _DashboardViewState extends State<DashboardView> {
         child: Padding(
       padding: const EdgeInsets.all(8.0),
       child: QrImage(
-        data: user.content.user.id.toString(),
+        data: 'PPCOLL${user.content.user.id.toString()}',
         size: MediaQuery.of(context).size.width - 100,
         backgroundColor: Colors.white,
       ),
@@ -501,10 +497,16 @@ class _DashboardViewState extends State<DashboardView> {
                                       child: new Text("Calculator"),
                                       onPressed: () {
                                         Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    CalculatorView()));
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        CalculatorView()))
+                                            .then((res) {
+                                          setState(() {
+                                            _totalPlastikController.text = res;
+//                                            print(_totalPlastikController.text);
+                                          });
+                                        });
                                       },
                                     ),
                                     new FlatButton(
@@ -550,7 +552,8 @@ class _DashboardViewState extends State<DashboardView> {
         ));
   }
 
-  Widget _historyBox(String userName, String id, String poin, String date) {
+  Widget _historyBox(
+      String status, String userName, String id, String poin, String date) {
     double dotSize = 20;
     return Container(
         constraints: BoxConstraints.expand(height: 100),
@@ -564,7 +567,10 @@ class _DashboardViewState extends State<DashboardView> {
                 height: dotSize,
                 width: dotSize,
                 decoration: new BoxDecoration(
-                    shape: BoxShape.circle, color: MyColors.primaryColor),
+                    shape: BoxShape.circle,
+                    color: status == 'in'
+                        ? MyColors.secondaryColor
+                        : MyColors.primaryColor),
               ),
             ),
             new Expanded(
@@ -580,7 +586,10 @@ class _DashboardViewState extends State<DashboardView> {
                           '$poin',
                           overflow: TextOverflow.ellipsis,
                           style: new TextStyle(
-                              fontSize: 20.0, color: MyColors.primaryColor),
+                              fontSize: 20.0,
+                              color: status == 'in'
+                                  ? MyColors.secondaryDarkColor
+                                  : MyColors.primaryColor),
                         ),
                       ),
                       Flexible(
@@ -593,7 +602,7 @@ class _DashboardViewState extends State<DashboardView> {
                     ],
                   ),
                   new Text(
-                    userName,
+                    '$userName ($status)',
                     style: new TextStyle(
                         fontSize: 18.0, color: MyColors.secondaryColor),
                   )

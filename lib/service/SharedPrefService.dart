@@ -26,7 +26,7 @@ class SharedPreferencesBuilder<T> extends StatelessWidget {
   }
 }
 
-void setSharedPrefString(String pref, String text) async {
+Future setSharedPrefString(String pref, String text) async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   await prefs.setString(pref, text);
 }

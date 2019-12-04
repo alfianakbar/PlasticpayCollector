@@ -1,4 +1,4 @@
-import 'package:plasticpay/model/CollectorModel.dart';
+import 'package:plasticpaycoll/model/CollectorModel.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:io';
@@ -13,6 +13,6 @@ Future<CollectorModel> findCollByID(int idCollector) async {
     'Secret': Config.secret,
     'Authorization': token
   });
-  print(response.body);
+//  print(response.body);
   return collectorModelFromJson(response.body);
 }

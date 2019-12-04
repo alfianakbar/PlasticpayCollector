@@ -56,51 +56,63 @@ class Transaction {
   int id;
   String actorRole;
   int actorId;
-  int merchantId;
+  int plasticCollectorId;
+  String plastic;
   String point;
   String status;
+  String totalPlastic;
   String totalPoint;
-  dynamic user;
-  Merchant merchant;
+  DateTime createdAt;
+  PlasticCollector user;
+  PlasticCollector plasticCollector;
 
   Transaction({
     this.id,
     this.actorRole,
     this.actorId,
-    this.merchantId,
+    this.plasticCollectorId,
+    this.plastic,
     this.point,
     this.status,
+    this.totalPlastic,
     this.totalPoint,
+    this.createdAt,
     this.user,
-    this.merchant,
+    this.plasticCollector,
   });
 
   factory Transaction.fromJson(Map<String, dynamic> json) => new Transaction(
     id: json["id"],
     actorRole: json["actor_role"],
-    actorId: json["actor_id"] == null ? null : json["actor_id"],
-    merchantId: json["merchant_id"],
+    actorId: json["actor_id"],
+    plasticCollectorId: json["plastic_collector_id"],
+    plastic: json["plastic"],
     point: json["point"],
     status: json["status"],
+    totalPlastic: json["total_plastic"],
     totalPoint: json["total_point"],
-    user: json["user"],
-    merchant: Merchant.fromJson(json["merchant"]),
+    createdAt: DateTime.parse(json["created_at"]),
+    user: PlasticCollector.fromJson(json["user"]),
+    plasticCollector: PlasticCollector.fromJson(json["plastic_collector"]),
   );
 
   Map<String, dynamic> toJson() => {
     "id": id,
     "actor_role": actorRole,
-    "actor_id": actorId == null ? null : actorId,
-    "merchant_id": merchantId,
+    "actor_id": actorId,
+    "plastic_collector_id": plasticCollectorId,
+    "plastic": plastic,
     "point": point,
     "status": status,
+    "total_plastic": totalPlastic,
     "total_point": totalPoint,
-    "user": user,
-    "merchant": merchant.toJson(),
+    "created_at": createdAt.toIso8601String(),
+    "user": user.toJson(),
+    "plastic_collector": plasticCollector.toJson(),
   };
 }
 
-class Merchant {
+class PlasticCollector {
   int id;
   String name;
   String email;
@@ -113,6 +125,7 @@ class Merchant {
   int regencyId;
   dynamic districtId;
   dynamic villageId;
+  String capacity;
   String emailInacash;
   String walletInacash;
   DateTime createdAt;
@@ -121,7 +134,7 @@ class Merchant {
   DateTime birthDate;
   String pin;
 
-  Merchant({
+  PlasticCollector({
     this.id,
     this.name,
     this.email,
@@ -134,6 +147,7 @@ class Merchant {
     this.regencyId,
     this.districtId,
     this.villageId,
+    this.capacity,
     this.emailInacash,
     this.walletInacash,
     this.createdAt,
@@ -143,7 +157,7 @@ class Merchant {
     this.pin,
   });
 
-  factory Merchant.fromJson(Map<String, dynamic> json) => new Merchant(
+  factory PlasticCollector.fromJson(Map<String, dynamic> json) => new PlasticCollector(
     id: json["id"],
     name: json["name"],
     email: json["email"],
@@ -156,8 +170,9 @@ class Merchant {
     regencyId: json["regency_id"] == null ? null : json["regency_id"],
     districtId: json["district_id"],
     villageId: json["village_id"],
-    emailInacash: json["email_inacash"],
-    walletInacash: json["wallet_inacash"],
+    capacity: json["capacity"] == null ? null : json["capacity"],
+    emailInacash: json["email_inacash"] == null ? null : json["email_inacash"],
+    walletInacash: json["wallet_inacash"] == null ? null : json["wallet_inacash"],
     createdAt: DateTime.parse(json["created_at"]),
     updatedAt: DateTime.parse(json["updated_at"]),
     deletedAt: json["deleted_at"],
@@ -178,8 +193,9 @@ class Merchant {
     "regency_id": regencyId == null ? null : regencyId,
     "district_id": districtId,
     "village_id": villageId,
-    "email_inacash": emailInacash,
-    "wallet_inacash": walletInacash,
+    "capacity": capacity == null ? null : capacity,
+    "email_inacash": emailInacash == null ? null : emailInacash,
+    "wallet_inacash": walletInacash == null ? null : walletInacash,
     "created_at": createdAt.toIso8601String(),
     "updated_at": updatedAt.toIso8601String(),
     "deleted_at": deletedAt,

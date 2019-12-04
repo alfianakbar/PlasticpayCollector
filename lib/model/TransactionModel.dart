@@ -28,7 +28,8 @@ class TransactionModel {
         status: json["status"],
         message: json["message"],
         code: json["code"],
-        content: Content.fromJson(json["content"]),
+        content:
+            json["content"] == null ? null : Content.fromJson(json["content"]),
       );
 
   Map<String, dynamic> toJson() => {
@@ -51,10 +52,8 @@ class Content {
   factory Content.fromJson(Map<String, dynamic> json) => new Content(
         transactions: new List<Transaction>.from(
             json["transactions"].map((x) => Transaction.fromJson(x))),
-        conversions: json["conversions"] == null
-            ? null
-            : new List<Conversion>.from(
-                json["conversions"].map((x) => Conversion.fromJson(x))),
+        conversions: new List<Conversion>.from(
+            json["conversions"].map((x) => Conversion.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
@@ -94,8 +93,6 @@ class Transaction {
   int userId;
   int plasticCollectorId;
   int status;
-  double totalPlastic;
-  double totalPoint;
   DateTime createdAt;
   User user;
   PlasticCollector plasticCollector;
@@ -105,8 +102,6 @@ class Transaction {
     this.userId,
     this.plasticCollectorId,
     this.status,
-    this.totalPlastic,
-    this.totalPoint,
     this.createdAt,
     this.user,
     this.plasticCollector,
@@ -117,11 +112,6 @@ class Transaction {
         userId: json["user_id"],
         plasticCollectorId: json["plastic_collector_id"],
         status: json["status"],
-        totalPlastic: json["total_plastic"] == null
-            ? null
-            : double.parse(json["total_plastic"]),
-        totalPoint:
-            json["total_point"] == null ? null : double.parse(json["total_point"]),
         createdAt: DateTime.parse(json["created_at"]),
         user: User.fromJson(json["user"]),
         plasticCollector: PlasticCollector.fromJson(json["plastic_collector"]),
@@ -132,8 +122,6 @@ class Transaction {
         "user_id": userId,
         "plastic_collector_id": plasticCollectorId,
         "status": status,
-        "total_plastic": totalPlastic.toString(),
-        "total_point": totalPoint.toString(),
         "created_at": createdAt.toIso8601String(),
         "user": user.toJson(),
         "plastic_collector": plasticCollector.toJson(),
@@ -145,14 +133,17 @@ class PlasticCollector {
   String name;
   String email;
   String phoneNumber;
-  String gender;
+  dynamic gender;
   String address;
-  dynamic latitude;
-  dynamic longitude;
+  String latitude;
+  String longitude;
   int provinceId;
   int regencyId;
   dynamic districtId;
   dynamic villageId;
+  String capacity;
+  String emailInacash;
+  String walletInacash;
   DateTime createdAt;
   DateTime updatedAt;
   dynamic deletedAt;
@@ -170,6 +161,9 @@ class PlasticCollector {
     this.regencyId,
     this.districtId,
     this.villageId,
+    this.capacity,
+    this.emailInacash,
+    this.walletInacash,
     this.createdAt,
     this.updatedAt,
     this.deletedAt,
@@ -189,6 +183,9 @@ class PlasticCollector {
         regencyId: json["regency_id"],
         districtId: json["district_id"],
         villageId: json["village_id"],
+        capacity: json["capacity"],
+        emailInacash: json["email_inacash"],
+        walletInacash: json["wallet_inacash"],
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
         deletedAt: json["deleted_at"],
@@ -207,6 +204,9 @@ class PlasticCollector {
         "regency_id": regencyId,
         "district_id": districtId,
         "village_id": villageId,
+        "capacity": capacity,
+        "email_inacash": emailInacash,
+        "wallet_inacash": walletInacash,
         "created_at": createdAt.toIso8601String(),
         "updated_at": updatedAt.toIso8601String(),
         "deleted_at": deletedAt,
@@ -220,10 +220,12 @@ class User {
   String phoneNumber;
   dynamic gender;
   DateTime birthDate;
-  String address;
-  int provinceId;
-  int regencyId;
+  dynamic address;
+  dynamic provinceId;
+  dynamic regencyId;
   String pin;
+  String emailInacash;
+  String walletInacash;
   DateTime createdAt;
   DateTime updatedAt;
   dynamic deletedAt;
@@ -239,6 +241,8 @@ class User {
     this.provinceId,
     this.regencyId,
     this.pin,
+    this.emailInacash,
+    this.walletInacash,
     this.createdAt,
     this.updatedAt,
     this.deletedAt,
@@ -255,6 +259,8 @@ class User {
         provinceId: json["province_id"],
         regencyId: json["regency_id"],
         pin: json["pin"],
+        emailInacash: json["email_inacash"],
+        walletInacash: json["wallet_inacash"],
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
         deletedAt: json["deleted_at"],
@@ -272,6 +278,8 @@ class User {
         "province_id": provinceId,
         "regency_id": regencyId,
         "pin": pin,
+        "email_inacash": emailInacash,
+        "wallet_inacash": walletInacash,
         "created_at": createdAt.toIso8601String(),
         "updated_at": updatedAt.toIso8601String(),
         "deleted_at": deletedAt,

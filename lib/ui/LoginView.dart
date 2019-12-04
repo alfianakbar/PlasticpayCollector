@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'RegistrasiView.dart';
-import 'package:plasticpay/service/UserService.dart';
-import 'package:plasticpay/model/ProfileModel.dart';
+import 'package:plasticpaycoll/service/UserService.dart';
+import 'package:plasticpaycoll/model/ProfileModel.dart';
 import 'DashboardView.dart';
 import 'MyTheme.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -20,6 +19,8 @@ class _LoginViewState extends State<LoginView> {
   ProfileModel _user;
   LoginState _loginState;
 
+  bool _hidePassword = true;
+
   @override
   void initState() {
     cekLogin();
@@ -34,6 +35,7 @@ class _LoginViewState extends State<LoginView> {
         setState(() {
           _loginState = LoginState.sukses;
         });
+        Navigator.of(context).pop();
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => DashboardView(_user)),
@@ -132,7 +134,7 @@ class _LoginViewState extends State<LoginView> {
                     ),
                     Flexible(
                       child: TextField(
-                        obscureText: true,
+                        obscureText: _hidePassword,
                         style: TextStyle(color: Colors.white),
                         controller: _passwordController,
                         decoration: new InputDecoration(
@@ -144,6 +146,17 @@ class _LoginViewState extends State<LoginView> {
                                     new BorderSide(color: Colors.grey))),
                       ),
                     ),
+                    InkWell(
+                      child: Icon(
+                        Icons.remove_red_eye,
+                        color: _hidePassword ? Colors.grey : Colors.white,
+                      ),
+                      onTap: () {
+                        setState(() {
+                          _hidePassword = !_hidePassword;
+                        });
+                      },
+                    )
                   ],
                 ),
                 _loginState == null
@@ -192,8 +205,9 @@ class _LoginViewState extends State<LoginView> {
                   height: 20,
                 ),
                 InkWell(
-                  onTap: (){
-                    launch('https://merchant.plasticpay.net/merchant/password/email');
+                  onTap: () {
+                    launch(
+                        'https://collector.plasticpay.net/collector/password/email');
                   },
                   child: Center(
                     child: Text(
@@ -213,18 +227,21 @@ class _LoginViewState extends State<LoginView> {
   void _loginPressed() async {
     await login(_emailController.text, _passwordController.text);
     if (await isLogin()) {
-      print('Login SUKSES');
-      _user = await getProfile();
-      print(_user.content.user.name);
-      setState(() {
-        _loginState = LoginState.sukses;
+//      print('Login SUKSES');
+      getProfile().then((res) {
+        _user = res;
+//        print(_user.content.user.name);
+        setState(() {
+          _loginState = LoginState.sukses;
+        });
+        Navigator.of(context).pop();
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => DashboardView(_user)),
+        );
       });
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => DashboardView(_user)),
-      );
     } else {
-      print('Login GAGAL');
+//      print('Login GAGAL');
       setState(() {
         _loginState = LoginState.gagal;
       });

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'LoginView.dart';
-import 'package:plasticpay/service/UserService.dart';
+import 'package:plasticpaycoll/service/UserService.dart';
 import 'package:flutter/services.dart';
 import 'MyTheme.dart';
 
